@@ -1,9 +1,7 @@
 import streamlit as st
 import pandas as pd
 import pickle
-from sklearn.preprocessing import OrdinalEncoder
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
+import os
 
 # Custom CSS for dark theme
 st.markdown("""
@@ -49,10 +47,20 @@ st.markdown("""
     <hr style="border:1px solid #004080;">
 """, unsafe_allow_html=True)
 
-# Load the pickled model and pipeline
-model_path = './path_to_your_pickled_model/random_forest_model.pkl'
-pipeline_path = './path_to_your_pickled_model/preprocessor_pipeline.pkl'
+# Define paths for model and pipeline
+model_path = './model.pkl'
+pipeline_path = './preprocessor.pkl'
 
+# Check if the model and pipeline files exist
+if not os.path.exists(model_path):
+    st.error(f"Model file not found: {model_path}")
+    st.stop()
+
+if not os.path.exists(pipeline_path):
+    st.error(f"Pipeline file not found: {pipeline_path}")
+    st.stop()
+
+# Load the pickled model and pipeline
 with open(model_path, 'rb') as file:
     model = pickle.load(file)
 
@@ -60,7 +68,11 @@ with open(pipeline_path, 'rb') as file:
     preprocessor = pickle.load(file)
 
 # Load the dataset to retrieve columns and preview the data
-data_path = './data/gemstone.csv'
+data_path = './gemstone.csv'
+if not os.path.exists(data_path):
+    st.error(f"Data file not found: {data_path}")
+    st.stop()
+
 df = pd.read_csv(data_path)
 st.subheader("Data Preview")
 st.write("The first few rows of the dataset:")
