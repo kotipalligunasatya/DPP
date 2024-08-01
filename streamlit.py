@@ -50,8 +50,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Load the pickled model and pipeline
-model_path = 'artifacts\model.pkl'
-pipeline_path = 'artifacts\preprocessor.pkl'
+model_path = 'model.pkl'
+pipeline_path = 'preprocessor.pkl'
 
 with open(model_path, 'rb') as file:
     model = pickle.load(file)
@@ -60,7 +60,7 @@ with open(pipeline_path, 'rb') as file:
     preprocessor = pickle.load(file)
 
 # Load the dataset to retrieve columns and preview the data
-data_path = 'data\gemstone.csv'
+data_path = 'gemstone.csv'
 df = pd.read_csv(data_path)
 st.subheader("Data Preview")
 st.write("The first few rows of the dataset:")
