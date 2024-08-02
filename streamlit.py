@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 import pickle
-import os
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.pipeline import Pipeline
+from sklearn.compose import ColumnTransformer
 
 # Custom CSS for dark theme
 st.markdown("""
@@ -47,20 +49,10 @@ st.markdown("""
     <hr style="border:1px solid #004080;">
 """, unsafe_allow_html=True)
 
-# Define paths for model and pipeline
-model_path = './model.pkl'
-pipeline_path = './preprocessor.pkl'
-
-# Check if the model and pipeline files exist
-if not os.path.exists(model_path):
-    st.error(f"Model file not found: {model_path}")
-    st.stop()
-
-if not os.path.exists(pipeline_path):
-    st.error(f"Pipeline file not found: {pipeline_path}")
-    st.stop()
-
 # Load the pickled model and pipeline
+model_path = 'model.pkl'
+pipeline_path = 'preprocessor.pkl'
+
 with open(model_path, 'rb') as file:
     model = pickle.load(file)
 
@@ -68,11 +60,7 @@ with open(pipeline_path, 'rb') as file:
     preprocessor = pickle.load(file)
 
 # Load the dataset to retrieve columns and preview the data
-data_path = './gemstone.csv'
-if not os.path.exists(data_path):
-    st.error(f"Data file not found: {data_path}")
-    st.stop()
-
+data_path = 'gemstone.csv'
 df = pd.read_csv(data_path)
 st.subheader("Data Preview")
 st.write("The first few rows of the dataset:")
@@ -109,25 +97,18 @@ def user_input_features():
 
 input_df = user_input_features()
 
-# Check the input data
-st.write("Input Data")
-st.dataframe(input_df)
-
 # Preprocess the user input using the loaded pipeline
-try:
-    preprocessed_input = preprocessor.transform(input_df)
-    st.write("Preprocessed Input")
-    st.dataframe(pd.DataFrame(preprocessed_input, columns=preprocessor.get_feature_names_out()))
+preprocessed_input = preprocessor.transform(input_df)
 
-    # Predict price using the loaded model
-    prediction = model.predict(preprocessed_input)
+# Predict price using the loaded model
+prediction = model.predict(preprocessed_input)
 
-    st.subheader("Prediction")
-    st.markdown(f"""
-        <h2 style="color: #80bfff;">Predicted Price: ${prediction[0]:,.2f}</h2>
-    """, unsafe_allow_html=True)
+# Convert the prediction to a float
+predicted_price = float(prediction[0])
 
-except Exception as e:
-    st.error(f"An error occurred: {e}")
+st.subheader("Prediction")
+st.markdown(f"""
+    <h2 style="color: #80bfff;">Predicted Price: ${predicted_price:,.2f}</h2>
+""", unsafe_allow_html=True)
 
 st.write("Note: The prediction is based on the Random Forest model loaded from a pickle file.")
