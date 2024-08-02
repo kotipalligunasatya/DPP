@@ -43,7 +43,7 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 # Title and header with styling
-st.title("💎 Gemstone Price Prediction 💎")
+st.title(" Gemstone Price Prediction ")
 st.markdown("""
     <h3 style="color: #80bfff;">Predict the price of gemstones based on their characteristics.</h3>
     <hr style="border:1px solid #004080;">
